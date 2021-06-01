@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>google firestore using javascript</title>
+    </head>
+    <body>
+        Name    <input id="NameTbox" type="text" oninput="Update(this.value,'name')"> <br><br>
+        RollNo  <input id="RollTbox" type="text" oninput="Update(this.value,'roll')"> <br><br>
+        Section <input id="SecTbox" type="text" oninput="Update(this.value,'sec')"> <br><br>
+        Gender  <input id="GenTbox" type="text" oninput="Update(this.value,'gen')"> <br> <br>
+        <hr>
+        <button id="createbtn">CREATE</button>
+        <button id="readbtn">READ</button>
+        <button id="updatebtn">UPDATE</button>
+        <button id="deletebtn">DELETE</button>
+
+        <script type="text/javascript" src="https://www.gstatic.com/firebasejs/8.6.2/firebase-app.js"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/firebasejs/8.6.2/firebase-app.js"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/firebasejs/8.6.2/firebase-app.js"></script>
+
+        <script id="MainScript">
+            let nameT=document.getElementById('NameTbox');
+            let rollT=document.getElementById('RollTbox');
+            let secT=document.getElementById('SecTbox');
+            let genT=document.getElementById('GenTbox');
+
+            let nameV=NameT.value;
+            let rollV=RollTbox.value;
+            let secV=SecV.value;
+            let genV=GenTbox.value;
+
+            function pdate(val,type){
+                if(type=='name') nameV=val;
+                else if(type=='roll') rollV=val;
+                else if(type=='sec') secV=val;
+                else if(type=='gen') genV=val;
+
+        }
+        
+//------------------------configuration---------------------------------------------------------------//
+        const firebaseConfig = {
+        apiKey: "AIzaSyBE1xWLkusIsYTU9MhVtdl_vir8DNqyBg8",
+        authDomain: "princika-desiabalan.firebaseapp.com",
+        projectId: "princika-desiabalan",
+        storageBucket: "princika-desiabalan.appspot.com",
+        messagingSenderId: "300085568005",
+        appId: "1:300085568005:web:44cde583b4d30e41b4f26c"
+        };
+
+        firebase.initializeapp(firebaseConfig);
+        let cloudDB=firebase.firestore();
+
+//-------------------CREATE DATA----------------------------------------//
+       
+        //---Add document with auto generated id
+        function Add_doc_WithAutoID(){
+            cloudDB.collection("students").add(
+                {
+                    NameOfstd: nameV,
+                    RollNo: Number(rollV),
+                    Section: secV,
+                    Gender: genV,
+                }
+                )
+            
+            .then(function(docRef){
+                console.log("document written with ID",docref.id);
+            })
+            .catch(function(error){
+                console.error("error adding documents",error);
+
+            });
+        }
+        //---Add document with custom id
+        function Add_doc_WithID(){
+            cloudDB.collection("students").doc(rollV).set(
+                {
+                    NameOfStd:nameV,
+                    RollNo:Number(rollV),
+                    Section:secV,
+                    Gender:genV,
+                })
+            
+            .then(function(){
+                console.log("document written with ID",rollV);
+            })
+            .catch(function(error){
+                console.error("error adding documents",error);
+
+            });
+        }
+
+//-------------READ DATA--------------------------------------//
+        //---Rtrive data within a document
+        function READ_fields_inDocument(){
+            cloudDB.collection("students").doc(rollV).get()
+            .then(function(doc){
+                if(doc.exists){
+                    NameT.value=doc.data().NameOfStd;
+                    secT.value=doc.data().RollNo;
+                    genT.value=doc.data().Gender;
+                }
+                else{
+                    console.log("doc does not exist");
+                }            
+            })
+            .catch(function(error){
+                console.log("error",console.error();
+            })
+            
+        }        
+//--------------Update data------------------------------------//
+        //---update fields inside a document
+        function update_fields_inDocument(){
+            cloudDB.collection("students").doc(rollV).update(
+                {
+                    NameOfstd:nameV,
+                    Section:secV,
+                    Gender:genV,
+                })
+            
+            .then(function(){
+                console.log("document written with ID",rollV);
+            })
+            .catch(function(error){
+                console.error("error adding documents",error);
+
+            });
+        }        
+       
+//--------------deleting data----------------------------------//
+        //---delete a document
+        function DeleteDocument(){
+            cloudDB.collection("students").doc(rollV).delete()
+            .then(function (){
+                console.log("document deleted with ID", rollV);
+            })
+            .catch(function(error){
+                console.error("error deleted documents", error);
+
+            });
+        }        
+
+ 
+//-----------------------Button events---------------------------------------------------------------------//
+        document.getElementById('createbtn').onclick=function(){
+            Add_doc_WithAutoID();
+        }
+        document.getElementById('updatebtn').onclick=function(){
+            update_fields_inDocument();
+            
+        }
+        document.getElementById('readbtn').onclick=function(){
+            READ_fields_inDocument();
+        }
+        document.getElementById('deletebtn').onclick=function(){
+            DeleteDocument();
+        }
+
+
+      </script>
+</body>
+</html>
